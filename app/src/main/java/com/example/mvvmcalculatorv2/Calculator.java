@@ -51,9 +51,6 @@ public class Calculator {
                     op = Operation.DIVISION_OP;
                     number="";
                     break;
-                case Operation.DOT:
-
-                    break;
                 case Operation.EQUAL_OP:
                     if (!number.isEmpty())
                     result = getResultOf(result,Double.parseDouble(number),op);
@@ -62,10 +59,7 @@ public class Calculator {
                 default:
                     number = number.concat(String.valueOf(eq[i]));
             }
-
-
         }
-
         return 0.0d;
     }
 

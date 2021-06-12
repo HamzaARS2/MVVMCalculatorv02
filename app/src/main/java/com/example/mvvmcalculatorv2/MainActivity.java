@@ -42,6 +42,7 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
         binding.btnSub.setOnClickListener(this);
         binding.btnMul.setOnClickListener(this);
         binding.btnDiv.setOnClickListener(this);
+        binding.btnDot.setOnClickListener(this);
         binding.btnEqual.setOnClickListener(this);
         binding.btnClear.setOnClickListener(this);
         binding.btnBack.setOnClickListener(this);
@@ -79,14 +80,27 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
                 if (!lastIsOp())
                     binding.tvOperation.setText(binding.tvOperation.getText().toString() + Operation.MULTIPLICATION_OP);
                 else
-                    changeLastOp(Operation.MULTIPLICATION_OP);                break;
+                    changeLastOp(Operation.MULTIPLICATION_OP);
+                break;
             case R.id.btn_div:
                 if (!lastIsOp())
                     binding.tvOperation.setText(binding.tvOperation.getText().toString() + Operation.DIVISION_OP);
                 else
-                    changeLastOp(Operation.DIVISION_OP);                break;
+                    changeLastOp(Operation.DIVISION_OP);
+                break;
+            case R.id.btn_dot:
+                if (!lastIsOp())
+                    binding.tvOperation.setText(binding.tvOperation.getText().toString() + Operation.DOT);
+                else
+                    changeLastOp(Operation.DOT);
+                break;
             case R.id.btn_equal:
+                if (!lastIsOp())
                 binding.tvResult.setText(String.valueOf(viewModel.getResult(binding.tvOperation.getText().toString()+"=")));
+                else {
+                    back();
+                    binding.tvResult.setText(String.valueOf(viewModel.getResult(binding.tvOperation.getText().toString()+"=")));
+                }
                 break;
             case R.id.btn_clear:
                 clear();
@@ -121,6 +135,7 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
             case Operation.SUBTRACTION_OP:
             case Operation.MULTIPLICATION_OP:
             case Operation.DIVISION_OP:
+            case Operation.DOT:
                 return true;
         }
         return false;
