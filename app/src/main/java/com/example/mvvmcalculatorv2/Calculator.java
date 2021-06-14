@@ -52,18 +52,16 @@ public class Calculator {
                     number="";
                     break;
                 case Operation.EQUAL_OP:
-                    if (!number.isEmpty())
                     result = getResultOf(result,Double.parseDouble(number),op);
-
                     return result;
                 default:
                     number = number.concat(String.valueOf(eq[i]));
             }
         }
-        return 0.0d;
+        return result;
     }
 
-    private double getResultOf(double first , double second, char operation){
+    private double getResultOf(double first , double second, char operation) {
         switch (operation){
             case Operation.ADDITION_OP:
                 return first + second;

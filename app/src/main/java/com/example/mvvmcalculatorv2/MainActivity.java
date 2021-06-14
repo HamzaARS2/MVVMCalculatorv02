@@ -1,33 +1,24 @@
 package com.example.mvvmcalculatorv2;
 
+import android.annotation.SuppressLint;
 import android.os.Bundle;
 import android.view.View;
-import android.widget.Toast;
-
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.databinding.DataBindingUtil;
 import androidx.lifecycle.ViewModelProvider;
 
 import com.example.mvvmcalculatorv2.databinding.ActivityMainBinding;
 
-import java.util.ArrayList;
-import java.util.List;
 
+public class MainActivity extends AppCompatActivity implements View.OnClickListener , EqualListener {
 
-public class MainActivity extends AppCompatActivity implements View.OnClickListener {
-
-    public ActivityMainBinding binding;
-    private ArrayList<Double> values;
-    private ArrayList<Character> operations;
-    private CalcViewModel viewModel;
-    private String tempVal = "";
+     private ActivityMainBinding binding;
+     private CalcViewModel viewModel;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        binding = ActivityMainBinding.inflate(getLayoutInflater());
-        setContentView(binding.getRoot());
-        values = new ArrayList<>();
-        operations = new ArrayList<>();
+        binding = DataBindingUtil.setContentView(this,R.layout.activity_main);
         binding.btn0.setOnClickListener(this);
         binding.btn1.setOnClickListener(this);
         binding.btn2.setOnClickListener(this);
@@ -43,20 +34,23 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
         binding.btnMul.setOnClickListener(this);
         binding.btnDiv.setOnClickListener(this);
         binding.btnDot.setOnClickListener(this);
-        binding.btnEqual.setOnClickListener(this);
         binding.btnClear.setOnClickListener(this);
         binding.btnBack.setOnClickListener(this);
+//        binding.btnRightBracket.setOnClickListener(this);
+//        binding.btnLeftBracket.setOnClickListener(this);
         viewModel = new ViewModelProvider(this).get(CalcViewModel.class);
-
+        binding.setViewmodel(viewModel);
+        binding.executePendingBindings();
+        viewModel.listener = this;
     }
 
+    @SuppressLint("SetTextI18n")
     @Override
     public void onClick(View view) {
         for (int i = 0; i <= 9; i++){
             String btns = "btn_"+i;
             int id = getResources().getIdentifier(btns,"id",getPackageName());
             if (view.getId() == id){
-                tempVal = tempVal.concat(i+"");
                 binding.tvOperation.setText(binding.tvOperation.getText().toString() + i +"");
             }
         }
@@ -65,87 +59,70 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
 
         switch (view.getId()){
             case R.id.btn_add:
-                if (!lastIsOp())
+                if (!viewModel.lastIsOp())
                 binding.tvOperation.setText(binding.tvOperation.getText().toString() + Operation.ADDITION_OP);
                 else
-                    changeLastOp(Operation.ADDITION_OP);
+                    viewModel.changeLastOp(Operation.ADDITION_OP);
                 break;
             case R.id.btn_sub:
-                if (!lastIsOp())
+                if (!viewModel.lastIsOp())
                     binding.tvOperation.setText(binding.tvOperation.getText().toString() + Operation.SUBTRACTION_OP);
                 else
-                    changeLastOp(Operation.SUBTRACTION_OP);
+                    viewModel.changeLastOp(Operation.SUBTRACTION_OP);
                 break;
             case R.id.btn_mul:
-                if (!lastIsOp())
+                if (!viewModel.lastIsOp())
                     binding.tvOperation.setText(binding.tvOperation.getText().toString() + Operation.MULTIPLICATION_OP);
                 else
-                    changeLastOp(Operation.MULTIPLICATION_OP);
+                    viewModel.changeLastOp(Operation.MULTIPLICATION_OP);
                 break;
             case R.id.btn_div:
-                if (!lastIsOp())
+                if (!viewModel.lastIsOp())
                     binding.tvOperation.setText(binding.tvOperation.getText().toString() + Operation.DIVISION_OP);
                 else
-                    changeLastOp(Operation.DIVISION_OP);
+                    viewModel.changeLastOp(Operation.DIVISION_OP);
                 break;
             case R.id.btn_dot:
-                if (!lastIsOp())
+                if (!viewModel.lastIsOp())
                     binding.tvOperation.setText(binding.tvOperation.getText().toString() + Operation.DOT);
                 else
-                    changeLastOp(Operation.DOT);
+                    viewModel.changeLastOp(Operation.DOT);
                 break;
-            case R.id.btn_equal:
-                if (!lastIsOp())
-                binding.tvResult.setText(String.valueOf(viewModel.getResult(binding.tvOperation.getText().toString()+"=")));
-                else {
-                    back();
-                    binding.tvResult.setText(String.valueOf(viewModel.getResult(binding.tvOperation.getText().toString()+"=")));
-                }
-                break;
+//            case R.id.btn_right_bracket:
+//                binding.tvOperation.setText(binding.tvOperation.getText().toString() + Operation.RIGHT_BRACKET);
+//                break;
+//            case R.id.btn_left_bracket:
+//                binding.tvOperation.setText(binding.tvOperation.getText().toString() + Operation.LEFT_BRACKET);
+//                break;
             case R.id.btn_clear:
                 clear();
                 break;
             case R.id.btn_back:
-                back();
+                viewModel.back();
                 break;
 
-
         }
-
-
     }
 
+    // handle the equal button
+    @Override
+    public void onEqualClick(double result) {
+        binding.tvResult.setText(String.valueOf(result));
+    }
+
+    // Detect any miss type and fix it
+    @Override
+    public void onTextChange(String newText) {
+        binding.tvOperation.setText(newText);
+    }
+
+    // Clear fields
     public void clear(){
         binding.tvOperation.setText("");
         binding.tvResult.setText("");
     }
 
-    public void back(){
-        String str = binding.tvOperation.getText().toString();
-        if (str.length() >0) {
-            String newText = str.substring(0, str.length() - 1);
-            binding.tvOperation.setText(newText);
-        }
-    }
 
-    public boolean lastIsOp(){
-        String text = binding.tvOperation.getText().toString();
-        switch (text.charAt(text.length()-1)){
-            case Operation.ADDITION_OP:
-            case Operation.SUBTRACTION_OP:
-            case Operation.MULTIPLICATION_OP:
-            case Operation.DIVISION_OP:
-            case Operation.DOT:
-                return true;
-        }
-        return false;
-    }
 
-    public void changeLastOp(char operation){
-        String text = binding.tvOperation.getText().toString();
-        String newText = text.substring(0,text.length()-1);
-        newText = newText.concat(String.valueOf(operation));
-        binding.tvOperation.setText(newText);
-    }
 
 }

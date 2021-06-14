@@ -7,4 +7,6 @@ public class Operation {
     public static final char DIVISION_OP = '/';
     public static final char DOT = '.';
     public static final char EQUAL_OP = '=';
+    public static final char RIGHT_BRACKET = ')';
+    public static final char LEFT_BRACKET = '(';
 }
